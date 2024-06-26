@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-apps-sidekiq-02
+  labels:
+    app: worker-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-apps-sidekiq-02
+  template:
+    metadata:
+      labels:
+        app: worker-apps-sidekiq-02
+    spec:
+      containers:
+        - name: worker-apps
+          image: dandi96/hpa-poc-worker:1.0.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          command:
+            - /bin/sh
+            - '-c'
+            - bundle exec sidekiq -q broadcast_specific -q broadcast_send -q broadcast_create_message -c 10
+          env:
+            - name: REDIS_HOST
+              value: "redis-svc.default.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: STATSD_HOST
+              value: "datadog-agent.default.svc.cluster.local"
+            - name: STATSD_PORT
+              value: "8125"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"

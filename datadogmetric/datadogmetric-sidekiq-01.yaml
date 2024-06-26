@@ -1,0 +1,6 @@
+apiVersion: datadoghq.com/v1alpha1
+kind: DatadogMetric
+metadata:
+  name: datadogmetric-sidekiq-01-queue-size
+spec:
+  query: max:app_chat_queue_size{queue_name:wa_cloud_broadcast_send} by {queue_name}.as_count().rollup(300)

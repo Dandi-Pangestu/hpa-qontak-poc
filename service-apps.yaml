@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-apps
+  labels:
+    app: service-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-apps
+  template:
+    metadata:
+      labels:
+        app: service-apps
+    spec:
+      containers:
+        - name: service-apps
+          image: dandi96/hpa-poc-service:1.0.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: "redis-svc.default.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: STATSD_HOST
+              value: "datadog-agent.default.svc.cluster.local"
+            - name: STATSD_PORT
+              value: "8125"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-apps-svc
+  labels:
+    app: service-apps
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30001
+  selector:
+    app: service-apps

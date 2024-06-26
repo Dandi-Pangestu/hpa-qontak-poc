@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-sidekiq-02
+spec:
+  minReplicas: 1
+  maxReplicas: 5
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: worker-apps-sidekiq-02
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: datadogmetric@default:datadogmetric-sidekiq-02-queue-size
+      target:
+        type: Value
+        value: 3000

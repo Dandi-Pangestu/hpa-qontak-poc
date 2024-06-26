@@ -1,0 +1,13 @@
+helm repo add datadog https://helm.datadoghq.com
+helm install datadog-operator datadog/datadog-operator
+
+kubectl taint nodes master-node node-role.kubernetes.io/control-plane- --> if had untolerated taint
+
+kubectl apply -f datadog-secret.yaml
+kubectl apply -f datadog-agent.yaml
+kubectl set env ds/datadog-agent DD_KUBELET_TLS_VERIFY=false  -o yaml
+
+kubectl apply -f datadogmetrics-crd.yaml
+
+# CLEAN UP
+helm delete datadog-operator

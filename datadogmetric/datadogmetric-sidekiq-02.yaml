@@ -1,0 +1,6 @@
+apiVersion: datadoghq.com/v1alpha1
+kind: DatadogMetric
+metadata:
+  name: datadogmetric-sidekiq-02-queue-size
+spec:
+  query: sum:app_chat_queue_size{queue_name IN (broadcast_specific, broadcast_send, broadcast_create_message)}.as_count().rollup(300)

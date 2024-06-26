@@ -1,0 +1,4 @@
+capture_sidekiq_metrics:
+  cron: "*/1 * * * *" # every 1 minutes
+  class: "CaptureSidekiqMetricsWorker"
+  queue: capture_sidekiq_metrics
